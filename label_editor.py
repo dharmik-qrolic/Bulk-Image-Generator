@@ -52,6 +52,7 @@ class LabelEditor:
         self.base_scale = 1.0
         self.csv_columns = self._get_csv_columns()
         self._next_id = self._find_next_id()
+        self._zoom_redraw_job = None
 
         self.root = tk.Tk()
         self.root.title("Vial Label Editor")
@@ -424,13 +425,14 @@ class LabelEditor:
         self._render_image()
         self._draw_all()
 
-    def _render_image(self):
+    def _render_image(self, fast=False):
         if self.image is None:
             return
         iw, ih = self.image.size
         sw = max(1, int(iw * self.scale))
         sh = max(1, int(ih * self.scale))
-        resized = self.image.resize((sw, sh), Image.LANCZOS)
+        resample_filter = Image.NEAREST if fast else Image.LANCZOS
+        resized = self.image.resize((sw, sh), resample_filter)
         self.tk_image = ImageTk.PhotoImage(resized)
         self.canvas.delete("img")
         self.canvas.create_image(self.offset_x, self.offset_y, anchor=tk.NW, image=self.tk_image, tags="img")
@@ -546,9 +548,17 @@ class LabelEditor:
         self.scale = self.base_scale * self.zoom
         self.offset_x = mx - img_x * self.scale
         self.offset_y = my - img_y * self.scale
-        self._render_image()
+        self._render_image(fast=True)
         self._draw_all()
         self.status_var.set(f"Zoom: {self.zoom*100:.0f}%  |  Mousewheel to zoom")
+
+        if self._zoom_redraw_job is not None:
+            self.root.after_cancel(self._zoom_redraw_job)
+        self._zoom_redraw_job = self.root.after(200, self._render_high_quality)
+
+    def _render_high_quality(self):
+        self._zoom_redraw_job = None
+        self._render_image(fast=False)
 
     def _reset_zoom(self):
         self.zoom = 1.0
