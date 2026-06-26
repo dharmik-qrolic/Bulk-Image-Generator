@@ -526,16 +526,15 @@ class LabelEditor:
     def _pan_end(self, event):
         self.canvas.config(cursor="hand2")
 
-    def _on_mousewheel(self, event):
-        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+    def _on_scroll_event(self, event):
+        if event.num == 4:
+            delta = 1
+        elif event.num == 5:
+            delta = -1
+        else:
+            delta = 1 if event.delta > 0 else -1
 
-    def _reset_zoom(self):
-        self.zoom = 1.0
-        self._fit_image()
-        self.status_var.set("Zoom: 100%  |  Drag to pan, Mousewheel to zoom")
-
-    def _on_zoom(self, event):
-        factor = 1.12 if event.delta > 0 else 1 / 1.12
+        factor = 1.12 if delta > 0 else 1 / 1.12
         new_zoom = max(0.1, min(10.0, self.zoom * factor))
         if new_zoom == self.zoom:
             return
@@ -549,7 +548,12 @@ class LabelEditor:
         self.offset_y = my - img_y * self.scale
         self._render_image()
         self._draw_all()
-        self.status_var.set(f"Zoom: {self.zoom*100:.0f}%  |  Ctrl+Wheel to zoom")
+        self.status_var.set(f"Zoom: {self.zoom*100:.0f}%  |  Mousewheel to zoom")
+
+    def _reset_zoom(self):
+        self.zoom = 1.0
+        self._fit_image()
+        self.status_var.set("Zoom: 100%  |  Drag to pan, Mousewheel to zoom")
 
     # ── EXTRA UI ───────────────────────────────────────────────
 
