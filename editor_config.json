@@ -1,0 +1,78 @@
+{
+  "fields": [
+    {
+      "id": "f0",
+      "label": "Medicine Name",
+      "csv_column": "MEDICINES",
+      "x": 924,
+      "y": 908,
+      "font_size": 46,
+      "color": [
+        47,
+        47,
+        47,
+        255
+      ],
+      "font_weight": "SemiBold",
+      "rotation": 0
+    },
+    {
+      "id": "f1",
+      "label": "Strength",
+      "csv_column": "Strength",
+      "x": 924,
+      "y": 1543,
+      "font_size": 46,
+      "color": [
+        47,
+        47,
+        47,
+        255
+      ],
+      "font_weight": "SemiBold",
+      "rotation": 0
+    },
+    {
+      "id": "f2",
+      "label": "Volume",
+      "csv_column": "Total",
+      "x": 921,
+      "y": 1000,
+      "font_size": 28,
+      "color": [
+        78,
+        78,
+        78,
+        255
+      ],
+      "font_weight": "Medium",
+      "rotation": 50
+    },
+    {
+      "id": "f3",
+      "label": "Price",
+      "csv_column": "Price",
+      "x": 924,
+      "y": 1200,
+      "font_size": 62,
+      "color": [
+        47,
+        47,
+        47,
+        255
+      ],
+      "font_weight": "SemiBold",
+      "rotation": 0
+    }
+  ],
+  "template_path": "/home/dharmik/Downloads/Python-Image Gen/blank_vial.png",
+  "text_align_x": 924,
+  "line_spacing": 48,
+  "crop_x1": 889,
+  "crop_y1": 880,
+  "crop_x2": 1336,
+  "crop_y2": 1660,
+  "cylinder_center_x": 1112,
+  "cylinder_radius": 700,
+  "cylinder_curvature": 30
+}

@@ -1,0 +1,10 @@
+labeled_vials/
+venv
+.env
+.vscode
+
+*
+!index.py
+!label_editor.py
+!.gitignore
+!editor_config.json
