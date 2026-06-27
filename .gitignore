@@ -8,3 +8,5 @@ venv
 !label_editor.py
 !.gitignore
 !editor_config.json
+!Inter-Medium.ttf
+!Inter-SemiBold.ttf
