@@ -10,14 +10,16 @@ CONFIG_FILE = "editor_config.json"
 CSV_FILE = "med_data.csv"
 
 DEFAULT_FIELDS = [
-    {"id": "f0", "label": "Medicine Name", "csv_column": "MEDICINES", "x": 924, "y": 908, "font_size": 46, "color": [47, 47, 47, 255], "font_weight": "SemiBold", "rotation": 0},
-    {"id": "f1", "label": "Strength",      "csv_column": "Strength",  "x": 924, "y": 1545, "font_size": 46, "color": [47, 47, 47, 255], "font_weight": "SemiBold", "rotation": 0},
-    {"id": "f2", "label": "Volume",        "csv_column": "Total",     "x": 924, "y": 1300, "font_size": 28, "color": [78, 78, 78, 255], "font_weight": "Medium", "rotation": 0},
+    {"id": "f0", "label": "Medicine Name", "csv_column": "MEDICINES", "x": 924, "y": 908, "font_size": 46, "color": [47, 47, 47, 255], "font_weight": "SemiBold", "rotation": 0, "max_width": 0},
+    {"id": "f1", "label": "Strength",      "csv_column": "Strength",  "x": 924, "y": 1545, "font_size": 46, "color": [47, 47, 47, 255], "font_weight": "SemiBold", "rotation": 0, "max_width": 0},
+    {"id": "f2", "label": "Volume",        "csv_column": "Total",     "x": 924, "y": 1300, "font_size": 28, "color": [78, 78, 78, 255], "font_weight": "Medium", "rotation": 0, "max_width": 0},
 ]
 
 DEFAULT_CONFIG = {
     "template_path": "blank_vial.png",
     "fields": list(DEFAULT_FIELDS),
+    "box_width": 260,
+    "box_height": 50,
     "text_align_x": 924,
     "line_spacing": 48,
     "crop_x1": 889,
@@ -32,6 +34,7 @@ DEFAULT_CONFIG = {
 CANVAS_W = 1000
 CANVAS_H = 750
 BOX_W = 260
+BOX_TEXT_WIDTH = 200  # max pixel width for label text wrapping
 BOX_H = 50
 FIELD_COLORS = ["#2196F3", "#4CAF50", "#FF9800", "#9C27B0", "#F44336", "#00BCD4", "#795548", "#607D8B"]
 
@@ -114,6 +117,7 @@ class LabelEditor:
                 "color": old.get(keys["key_color"], list(DEFAULT_FIELDS[i]["color"])),
                 "font_weight": "SemiBold" if fid != "volume" else "Medium",
                 "rotation": 0,
+                "max_width": 0,
             }
             new["fields"].append(field)
         for k in DEFAULT_CONFIG:
@@ -212,6 +216,8 @@ class LabelEditor:
             ("Cyl Center X:", "cylinder_center_x"),
             ("Cyl Radius:", "cylinder_radius"),
             ("Cyl Curvature:", "cylinder_curvature"),
+            ("Box Width:", "box_width"),
+            ("Box Height:", "box_height"),
         ]:
             row = ttk.Frame(ex)
             row.pack(fill=tk.X)
@@ -277,7 +283,7 @@ class LabelEditor:
         sz_var.trace_add("write", lambda *a, fid=fld["id"]: self._on_field_edit(fid))
         ttk.Spinbox(row2, from_=6, to=200, textvariable=sz_var, width=5).pack(side=tk.LEFT, padx=1)
 
-        # Row 3: Rotation + Weight + Color + Remove
+        # Row 3: Rotation + Weight + Color
         row3 = ttk.Frame(inner)
         row3.pack(fill=tk.X, pady=(1, 0))
         ttk.Label(row3, text="Rot:", width=3).pack(side=tk.LEFT)
@@ -295,13 +301,23 @@ class LabelEditor:
                               command=lambda fid=fld["id"]: self._pick_color(fid))
         color_btn.pack(side=tk.LEFT, padx=(4, 1))
 
-        ttk.Button(row3, text="X", width=2,
+        # Row 4: Max Width + Remove
+        row4 = ttk.Frame(inner)
+        row4.pack(fill=tk.X, pady=(1, 0))
+        ttk.Label(row4, text="Max W:", width=6).pack(side=tk.LEFT)
+        mw_var = tk.StringVar(value=str(fld.get("max_width", 0)))
+        mw_var.trace_add("write", lambda *a, fid=fld["id"]: self._on_field_edit(fid))
+        ttk.Spinbox(row4, from_=0, to=2000, textvariable=mw_var, width=6).pack(side=tk.LEFT, padx=1)
+        ttk.Label(row4, text="(0=no limit)", font=("", 8, "italic")).pack(side=tk.LEFT, padx=2)
+
+        ttk.Button(row4, text="X", width=2,
                    command=lambda fid=fld["id"]: self._remove_field(fid)).pack(side=tk.RIGHT, padx=1)
 
         self.field_widgets[fld["id"]] = {
             "frame": g, "label_var": lbl_var, "col_var": col_var,
             "x_var": x_var, "y_var": y_var, "sz_var": sz_var,
             "fw_var": fw_var, "rot_var": rot_var, "color_btn": color_btn,
+            "mw_var": mw_var,
         }
 
     def _on_field_edit(self, fid):
@@ -320,6 +336,8 @@ class LabelEditor:
         try: fld["font_size"] = int(w["sz_var"].get())
         except ValueError: pass
         try: fld["rotation"] = int(w["rot_var"].get())
+        except ValueError: pass
+        try: fld["max_width"] = int(w["mw_var"].get())
         except ValueError: pass
         fld["font_weight"] = w["fw_var"].get()
         w["frame"].configure(text=fld["label"])
@@ -372,6 +390,7 @@ class LabelEditor:
                 "color": [47, 47, 47, 255],
                 "font_weight": "SemiBold",
                 "rotation": 0,
+                "max_width": 0,
             }
         else:
             fld = {
@@ -384,6 +403,7 @@ class LabelEditor:
                 "color": [47, 47, 47, 255],
                 "font_weight": "SemiBold",
                 "rotation": 0,
+                "max_width": 0,
             }
         # Ensure unique ID
         existing_ids = {f["id"] for f in self.config["fields"]}
@@ -460,8 +480,10 @@ class LabelEditor:
             x_img = fld.get("x", self.config["text_align_x"])
             y_img = fld["y"]
             cx, cy = self._img_to_canvas(x_img, y_img)
-            bw = BOX_W * self.scale
-            bh = BOX_H * self.scale
+            fld_w = fld.get("max_width", 0)
+            bw_val = fld_w if fld_w > 0 else self.config.get("box_width", BOX_W)
+            bw = bw_val * self.scale
+            bh = self.config.get("box_height", BOX_H) * self.scale
 
             rect = self.canvas.create_rectangle(
                 cx, cy, cx + bw, cy + bh,
@@ -472,6 +494,7 @@ class LabelEditor:
                 cx + 4, cy + bh / 2, anchor=tk.W,
                 text=fld["label"], fill="white",
                 font=("", int(9 * self.scale), "bold"),
+                width=int(bw),  # wrap text if longer than actual box width
                 tags="box_label",
             )
             # Rotation indicator

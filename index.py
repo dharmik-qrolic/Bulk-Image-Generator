@@ -182,16 +182,49 @@ def draw_labeled_vial(row, output_filename):
         color = tuple(fld.get("color", [47, 47, 47, 255]))
         rotation = fld.get("rotation", 0)
 
-        if "/" in text:
-            parts = text.split("/")
-            lines = [parts[0].strip() + " /", parts[1].strip()]
-        else:
-            lines = [text]
+        lines = [text]
 
         font = get_font(font_weight, font_size)
         current_y = y_pos
+        max_width = fld.get("max_width", 0)
 
+        # Wrap text into multiple lines if max_width is set
+        final_lines = []
         for line in lines:
+            if max_width > 0:
+                # Split by space and also split after slashes
+                words = line.split(" ")
+                chunks = []
+                for i, word in enumerate(words):
+                    if "/" in word:
+                        parts = word.split("/")
+                        for part in parts[:-1]:
+                            chunks.append(part + "/")
+                        if parts[-1]:
+                            chunks.append(parts[-1])
+                    else:
+                        chunks.append(word)
+                    if i < len(words) - 1:
+                        chunks.append(" ")
+
+                current_line = ""
+                for chunk in chunks:
+                    test_line = current_line + chunk
+                    # Check text box width (stripped of leading/trailing space for measurement)
+                    bbox = draw.textbbox((0, 0), test_line.strip(), font=font)
+                    tw = bbox[2] - bbox[0]
+                    if tw <= max_width:
+                        current_line += chunk
+                    else:
+                        if current_line.strip():
+                            final_lines.append(current_line.strip())
+                        current_line = chunk
+                if current_line.strip():
+                    final_lines.append(current_line.strip())
+            else:
+                final_lines.append(line)
+
+        for line in final_lines:
             if rotation == 0:
                 draw.text((x_pos, current_y), line, fill=color, font=font)
             else:
