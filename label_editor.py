@@ -10,9 +10,9 @@ CONFIG_FILE = "editor_config.json"
 CSV_FILE = "med_data.csv"
 
 DEFAULT_FIELDS = [
-    {"id": "f0", "label": "Medicine Name", "csv_column": "MEDICINES", "x": 924, "y": 908, "font_size": 46, "color": [47, 47, 47, 255], "font_weight": "SemiBold", "rotation": 0, "max_width": 0},
-    {"id": "f1", "label": "Strength",      "csv_column": "Strength",  "x": 924, "y": 1545, "font_size": 46, "color": [47, 47, 47, 255], "font_weight": "SemiBold", "rotation": 0, "max_width": 0},
-    {"id": "f2", "label": "Volume",        "csv_column": "Total",     "x": 924, "y": 1300, "font_size": 28, "color": [78, 78, 78, 255], "font_weight": "Medium", "rotation": 0, "max_width": 0},
+    {"id": "f0", "label": "Medicine Name", "csv_column": "MEDICINES", "x": 924, "y": 908, "font_size": 46, "color": [47, 47, 47, 255], "font_weight": "SemiBold", "rotation": 0, "max_width": 0, "skew": 0, "curve": 0},
+    {"id": "f1", "label": "Strength",      "csv_column": "Strength",  "x": 924, "y": 1545, "font_size": 46, "color": [47, 47, 47, 255], "font_weight": "SemiBold", "rotation": 0, "max_width": 0, "skew": 0, "curve": 0},
+    {"id": "f2", "label": "Volume",        "csv_column": "Total",     "x": 924, "y": 1300, "font_size": 28, "color": [78, 78, 78, 255], "font_weight": "Medium", "rotation": 0, "max_width": 0, "skew": 0, "curve": 0},
 ]
 
 DEFAULT_CONFIG = {
@@ -118,6 +118,8 @@ class LabelEditor:
                 "font_weight": "SemiBold" if fid != "volume" else "Medium",
                 "rotation": 0,
                 "max_width": 0,
+                "skew": 0,
+                "curve": 0,
             }
             new["fields"].append(field)
         for k in DEFAULT_CONFIG:
@@ -301,23 +303,36 @@ class LabelEditor:
                               command=lambda fid=fld["id"]: self._pick_color(fid))
         color_btn.pack(side=tk.LEFT, padx=(4, 1))
 
-        # Row 4: Max Width + Remove
+        # Row 4: Max Width + Skew + Remove
         row4 = ttk.Frame(inner)
         row4.pack(fill=tk.X, pady=(1, 0))
         ttk.Label(row4, text="Max W:", width=6).pack(side=tk.LEFT)
         mw_var = tk.StringVar(value=str(fld.get("max_width", 0)))
         mw_var.trace_add("write", lambda *a, fid=fld["id"]: self._on_field_edit(fid))
-        ttk.Spinbox(row4, from_=0, to=2000, textvariable=mw_var, width=6).pack(side=tk.LEFT, padx=1)
-        ttk.Label(row4, text="(0=no limit)", font=("", 8, "italic")).pack(side=tk.LEFT, padx=2)
+        ttk.Spinbox(row4, from_=0, to=2000, textvariable=mw_var, width=5).pack(side=tk.LEFT, padx=1)
+
+        ttk.Label(row4, text="Skw:", width=4).pack(side=tk.LEFT, padx=(2, 0))
+        skew_var = tk.StringVar(value=str(fld.get("skew", 0)))
+        skew_var.trace_add("write", lambda *a, fid=fld["id"]: self._on_field_edit(fid))
+        ttk.Spinbox(row4, from_=-200, to=200, textvariable=skew_var, width=4).pack(side=tk.LEFT, padx=1)
 
         ttk.Button(row4, text="X", width=2,
                    command=lambda fid=fld["id"]: self._remove_field(fid)).pack(side=tk.RIGHT, padx=1)
+
+        # Row 5: Curve
+        row5 = ttk.Frame(inner)
+        row5.pack(fill=tk.X, pady=(1, 0))
+        ttk.Label(row5, text="Curve:", width=6).pack(side=tk.LEFT)
+        curve_var = tk.StringVar(value=str(fld.get("curve", 0)))
+        curve_var.trace_add("write", lambda *a, fid=fld["id"]: self._on_field_edit(fid))
+        ttk.Spinbox(row5, from_=-200, to=200, textvariable=curve_var, width=5).pack(side=tk.LEFT, padx=1)
+        ttk.Label(row5, text="(cylinder warp)", font=("", 8, "italic")).pack(side=tk.LEFT, padx=2)
 
         self.field_widgets[fld["id"]] = {
             "frame": g, "label_var": lbl_var, "col_var": col_var,
             "x_var": x_var, "y_var": y_var, "sz_var": sz_var,
             "fw_var": fw_var, "rot_var": rot_var, "color_btn": color_btn,
-            "mw_var": mw_var,
+            "mw_var": mw_var, "skew_var": skew_var, "curve_var": curve_var,
         }
 
     def _on_field_edit(self, fid):
@@ -338,6 +353,10 @@ class LabelEditor:
         try: fld["rotation"] = int(w["rot_var"].get())
         except ValueError: pass
         try: fld["max_width"] = int(w["mw_var"].get())
+        except ValueError: pass
+        try: fld["skew"] = int(w["skew_var"].get())
+        except ValueError: pass
+        try: fld["curve"] = int(w["curve_var"].get())
         except ValueError: pass
         fld["font_weight"] = w["fw_var"].get()
         w["frame"].configure(text=fld["label"])
@@ -391,6 +410,8 @@ class LabelEditor:
                 "font_weight": "SemiBold",
                 "rotation": 0,
                 "max_width": 0,
+                "skew": 0,
+                "curve": 0,
             }
         else:
             fld = {
@@ -404,6 +425,8 @@ class LabelEditor:
                 "font_weight": "SemiBold",
                 "rotation": 0,
                 "max_width": 0,
+                "skew": 0,
+                "curve": 0,
             }
         # Ensure unique ID
         existing_ids = {f["id"] for f in self.config["fields"]}
@@ -484,9 +507,19 @@ class LabelEditor:
             bw_val = fld_w if fld_w > 0 else self.config.get("box_width", BOX_W)
             bw = bw_val * self.scale
             bh = self.config.get("box_height", BOX_H) * self.scale
+            skew = fld.get("skew", 0) * self.scale
 
-            rect = self.canvas.create_rectangle(
-                cx, cy, cx + bw, cy + bh,
+            # 6-point polygon: Left half is flat, right half slopes
+            coords = [
+                cx, cy,                                # Left-Top
+                cx + bw / 2, cy,                       # Mid-Top (start of skew)
+                cx + bw, cy - skew / 2,                # Right-Top
+                cx + bw, cy + bh + skew / 2,           # Right-Bottom
+                cx + bw / 2, cy + bh,                  # Mid-Bottom (start of skew)
+                cx, cy + bh                            # Left-Bottom
+            ]
+            rect = self.canvas.create_polygon(
+                coords,
                 fill=color, outline=color, width=2,
                 tags="box",
             )

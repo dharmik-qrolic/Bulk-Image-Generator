@@ -224,24 +224,97 @@ def draw_labeled_vial(row, output_filename):
             else:
                 final_lines.append(line)
 
+        skew = fld.get("skew", 0)
+
+        # Measure text box size
+        measured_widths = [draw.textbbox((0, 0), line, font=font)[2] - draw.textbbox((0, 0), line, font=font)[0] for line in final_lines]
+        max_measured_w = max(measured_widths) if measured_widths else 10
+        w_block = max_width if max_width > 0 else max_measured_w
+        h_block = len(final_lines) * line_spacing
+
+        # Create temporary canvas for this field
+        pad = 40
+        temp_img = Image.new("RGBA", (w_block + pad * 2, h_block + pad * 2), (0, 0, 0, 0))
+        temp_draw = ImageDraw.Draw(temp_img)
+
+        # Draw lines centered horizontally and top-aligned inside the padded space
+        temp_y = pad
         for line in final_lines:
-            if rotation == 0:
-                draw.text((x_pos, current_y), line, fill=color, font=font)
-            else:
-                bbox = draw.textbbox((0, 0), line, font=font)
-                tw = bbox[2] - bbox[0]
-                th = bbox[3] - bbox[1]
-                pad = 20
-                tmp = Image.new("RGBA", (tw + pad * 2, th + pad * 2), (0, 0, 0, 0))
-                tmp_draw = ImageDraw.Draw(tmp)
-                tmp_draw.text((pad - bbox[0], pad - bbox[1]), line, fill=color, font=font)
-                rotated = tmp.rotate(rotation, expand=True, fillcolor=(0, 0, 0, 0))
-                center_x_img = x_pos + tw // 2
-                center_y_img = current_y + th // 2
-                paste_x = int(center_x_img - rotated.width // 2)
-                paste_y = int(center_y_img - rotated.height // 2)
-                text_layer.paste(rotated, (paste_x, paste_y), rotated)
-            current_y += line_spacing
+            # We can also draw left-aligned at x=pad
+            temp_draw.text((pad, temp_y), line, fill=color, font=font)
+            temp_y += line_spacing
+
+        # Apply skew (starting from the half-way point on the right side)
+        if skew != 0:
+            w_img, h_img = temp_img.size
+            w_half = w_img // 2
+            pad_y = abs(skew) // 2 + 10
+            dest_h = h_img + pad_y * 2
+            
+            # Create a blank destination canvas
+            dest = Image.new("RGBA", (w_img, dest_h), (0, 0, 0, 0))
+            
+            # Left half stays flat (copied directly, offset by pad_y)
+            left_half = temp_img.crop((0, 0, w_half, h_img))
+            dest.paste(left_half, (0, pad_y))
+            
+            # Right half is skewed with perspective transform
+            right_half = temp_img.crop((w_half, 0, w_img, h_img))
+            
+            # Define mapping points for the right half: dst_pts to src_pts
+            dy0 = pad_y
+            dy1 = pad_y + h_img
+            dy2 = pad_y + h_img + skew / 2
+            dy3 = pad_y - skew / 2
+            
+            dst_pts = [
+                (0, dy0),          # top-left of slice
+                (0, dy1),          # bottom-left of slice
+                (w_half, dy2),     # bottom-right of slice
+                (w_half, dy3)      # top-right of slice
+            ]
+            src_pts = [
+                (0, 0),            # top-left
+                (0, h_img),        # bottom-left
+                (w_half, h_img),   # bottom-right
+                (w_half, 0)        # top-right
+            ]
+            
+            matrix = []
+            for d, s in zip(dst_pts, src_pts):
+                matrix.append([d[0], d[1], 1, 0, 0, 0, -s[0] * d[0], -s[0] * d[1]])
+                matrix.append([0, 0, 0, d[0], d[1], 1, -s[1] * d[0], -s[1] * d[1]])
+                
+            A = np.array(matrix, dtype=float)
+            B = np.array(src_pts, dtype=float).reshape(8)
+            coeffs = np.linalg.solve(A, B)
+            
+            warped_right = right_half.transform((w_half, dest_h), Image.PERSPECTIVE, coeffs, Image.Resampling.BILINEAR)
+            dest.paste(warped_right, (w_half, 0), warped_right)
+            temp_img = dest
+
+        # Apply local cylinder warp/curve
+        curve = fld.get("curve", 0)
+        if curve != 0:
+            temp_img = warp_image_cylindrical(
+                temp_img,
+                center_x=temp_img.width / 2,
+                radius=config.get("cylinder_radius", 700),
+                curvature=curve,
+                crop_x1=0, crop_y1=0,
+                crop_x2=temp_img.width, crop_y2=temp_img.height
+            )
+
+        # Apply rotation
+        if rotation != 0:
+            temp_img = temp_img.rotate(rotation, expand=True, fillcolor=(0, 0, 0, 0))
+
+        # Center alignment pasting
+        cx_box = x_pos + w_block / 2
+        cy_box = y_pos + h_block / 2
+        paste_x = int(cx_box - temp_img.width / 2)
+        paste_y = int(cy_box - temp_img.height / 2)
+        text_layer.paste(temp_img, (paste_x, paste_y), temp_img)
 
     warped_text = warp_image_cylindrical(
         text_layer,

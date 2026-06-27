@@ -15,7 +15,9 @@
       ],
       "font_weight": "SemiBold",
       "rotation": 0,
-      "max_width": 395
+      "max_width": 395,
+      "skew": -38,
+      "curve": 80
     },
     {
       "id": "f1",
@@ -32,7 +34,9 @@
       ],
       "font_weight": "SemiBold",
       "rotation": 0,
-      "max_width": 404
+      "max_width": 404,
+      "skew": 0,
+      "curve": 2
     },
     {
       "id": "f2",
