@@ -10,3 +10,4 @@ venv
 !editor_config.json
 !Inter-Medium.ttf
 !Inter-SemiBold.ttf
+!templates/
