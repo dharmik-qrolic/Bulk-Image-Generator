@@ -177,7 +177,7 @@ def draw_labeled_vial(row, output_filename):
         text = str(row[col]).upper()
         x_pos = fld.get("x", config["text_align_x"])
         y_pos = fld["y"]
-        font_size = fld["font_size"]
+        font_size = min(int(fld["font_size"]), 500)  # clamp to safe max for PIL
         font_weight = fld.get("font_weight", "SemiBold")
         color = tuple(fld.get("color", [47, 47, 47, 255]))
         rotation = fld.get("rotation", 0)
@@ -188,41 +188,49 @@ def draw_labeled_vial(row, output_filename):
         current_y = y_pos
         max_width = fld.get("max_width", 0)
 
-        # Wrap text into multiple lines if max_width is set
-        final_lines = []
-        for line in lines:
-            if max_width > 0:
-                # Split by space and also split after slashes
-                words = line.split(" ")
-                chunks = []
-                for i, word in enumerate(words):
-                    if "/" in word:
-                        parts = word.split("/")
-                        for part in parts[:-1]:
-                            chunks.append(part + "/")
-                        if parts[-1]:
-                            chunks.append(parts[-1])
-                    else:
-                        chunks.append(word)
-                    if i < len(words) - 1:
-                        chunks.append(" ")
-
-                current_line = ""
-                for chunk in chunks:
-                    test_line = current_line + chunk
-                    # Check text box width (stripped of leading/trailing space for measurement)
-                    bbox = draw.textbbox((0, 0), test_line.strip(), font=font)
-                    tw = bbox[2] - bbox[0]
-                    if tw <= max_width:
-                        current_line += chunk
-                    else:
-                        if current_line.strip():
-                            final_lines.append(current_line.strip())
-                        current_line = chunk
-                if current_line.strip():
-                    final_lines.append(current_line.strip())
-            else:
-                final_lines.append(line)
+        # ── WRAP: commented out ──────────────────────────────────────────
+        # # Wrap text into multiple lines if max_width is set
+        # final_lines = []
+        # for line in lines:
+        #     if max_width > 0:
+        #         # Split by space and also split after slashes
+        #         words = line.split(" ")
+        #         chunks = []
+        #         for i, word in enumerate(words):
+        #             if "/" in word:
+        #                 parts = word.split("/")
+        #                 for part in parts[:-1]:
+        #                     chunks.append(part + "/")
+        #                 if parts[-1]:
+        #                     chunks.append(parts[-1])
+        #             else:
+        #                 chunks.append(word)
+        #             if i < len(words) - 1:
+        #                 chunks.append(" ")
+        #
+        #         current_line = ""
+        #         for chunk in chunks:
+        #             test_line = current_line + chunk
+        #             # Check text box width (stripped of leading/trailing space for measurement)
+        #             stripped = test_line.strip()
+        #             if not stripped:
+        #                 # Empty string would cause OSError in PIL; treat as zero-width
+        #                 current_line += chunk
+        #                 continue
+        #             bbox = draw.textbbox((0, 0), stripped, font=font)
+        #             tw = bbox[2] - bbox[0]
+        #             if tw <= max_width:
+        #                 current_line += chunk
+        #             else:
+        #                 if current_line.strip():
+        #                     final_lines.append(current_line.strip())
+        #                 current_line = chunk
+        #         if current_line.strip():
+        #             final_lines.append(current_line.strip())
+        #     else:
+        #         final_lines.append(line)
+        # ── END WRAP ─────────────────────────────────────────────────────
+        final_lines = list(lines)  # no wrapping: each line passed through as-is
 
         skew = fld.get("skew", 0)
 
@@ -293,17 +301,18 @@ def draw_labeled_vial(row, output_filename):
             dest.paste(warped_right, (w_half, 0), warped_right)
             temp_img = dest
 
-        # Apply local cylinder warp/curve
-        curve = fld.get("curve", 0)
-        if curve != 0:
-            temp_img = warp_image_cylindrical(
-                temp_img,
-                center_x=temp_img.width / 2,
-                radius=config.get("cylinder_radius", 700),
-                curvature=curve,
-                crop_x1=0, crop_y1=0,
-                crop_x2=temp_img.width, crop_y2=temp_img.height
-            )
+        # ── LOCAL CURVE WARP: commented out ──────────────────────────────
+        # curve = fld.get("curve", 0)
+        # if curve != 0:
+        #     temp_img = warp_image_cylindrical(
+        #         temp_img,
+        #         center_x=temp_img.width / 2,
+        #         radius=config.get("cylinder_radius", 700),
+        #         curvature=curve,
+        #         crop_x1=0, crop_y1=0,
+        #         crop_x2=temp_img.width, crop_y2=temp_img.height
+        #     )
+        # ── END LOCAL CURVE WARP ─────────────────────────────────────────
 
         # Apply rotation
         if rotation != 0:
@@ -316,17 +325,18 @@ def draw_labeled_vial(row, output_filename):
         paste_y = int(cy_box - temp_img.height / 2)
         text_layer.paste(temp_img, (paste_x, paste_y), temp_img)
 
-    warped_text = warp_image_cylindrical(
-        text_layer,
-        center_x=config["cylinder_center_x"],
-        radius=config["cylinder_radius"],
-        curvature=config["cylinder_curvature"],
-        crop_x1=config["crop_x1"], crop_y1=config["crop_y1"],
-        crop_x2=config["crop_x2"], crop_y2=config["crop_y2"],
-    )
-
-    warped_text = warped_text.filter(ImageFilter.GaussianBlur(radius=0.5))
-    final_img = Image.alpha_composite(img, warped_text)
+    # ── GLOBAL CROP/WARP: commented out ─────────────────────────────────
+    # warped_text = warp_image_cylindrical(
+    #     text_layer,
+    #     center_x=config["cylinder_center_x"],
+    #     radius=config["cylinder_radius"],
+    #     curvature=config["cylinder_curvature"],
+    #     crop_x1=config["crop_x1"], crop_y1=config["crop_y1"],
+    #     crop_x2=config["crop_x2"], crop_y2=config["crop_y2"],
+    # )
+    # warped_text = warped_text.filter(ImageFilter.GaussianBlur(radius=0.5))
+    # ── END GLOBAL CROP/WARP ─────────────────────────────────────────────
+    final_img = Image.alpha_composite(img, text_layer)  # flat composite, no warp
     final_img.save(os.path.join(output_dir, output_filename), "PNG")
 
 
