@@ -175,6 +175,7 @@ def draw_labeled_vial(row, output_filename):
             continue
 
         text = str(row[col]).upper()
+        if text == "NAN": text = ""
         x_pos = fld.get("x", config["text_align_x"])
         y_pos = fld["y"]
         font_size = fld["font_size"]
@@ -182,26 +183,22 @@ def draw_labeled_vial(row, output_filename):
         color = tuple(fld.get("color", [47, 47, 47, 255]))
         rotation = fld.get("rotation", 0)
 
-        lines = [text]
-
         font = get_font(font_weight, font_size)
         current_y = y_pos
         max_width = fld.get("max_width", 0)
 
-        # Wrap text into multiple lines if max_width is set
+        lines = [text]
         final_lines = []
         for line in lines:
             if max_width > 0:
-                # Split by space and also split after slashes
                 words = line.split(" ")
                 chunks = []
                 for i, word in enumerate(words):
                     if "/" in word:
                         parts = word.split("/")
-                        for part in parts[:-1]:
-                            chunks.append(part + "/")
-                        if parts[-1]:
-                            chunks.append(parts[-1])
+                        chunks.append(parts[0])
+                        for part in parts[1:]:
+                            chunks.append("/" + part)
                     else:
                         chunks.append(word)
                     if i < len(words) - 1:
@@ -210,7 +207,6 @@ def draw_labeled_vial(row, output_filename):
                 current_line = ""
                 for chunk in chunks:
                     test_line = current_line + chunk
-                    # Check text box width (stripped of leading/trailing space for measurement)
                     bbox = draw.textbbox((0, 0), test_line.strip(), font=font)
                     tw = bbox[2] - bbox[0]
                     if tw <= max_width:
@@ -228,56 +224,54 @@ def draw_labeled_vial(row, output_filename):
 
         # Measure text box size
         measured_widths = [draw.textbbox((0, 0), line, font=font)[2] - draw.textbbox((0, 0), line, font=font)[0] for line in final_lines]
+        measured_heights = [draw.textbbox((0, 0), line, font=font)[3] - draw.textbbox((0, 0), line, font=font)[1] for line in final_lines]
+        
         max_measured_w = max(measured_widths) if measured_widths else 10
         w_block = max_width if max_width > 0 else max_measured_w
-        h_block = len(final_lines) * line_spacing
+        w_block = max(w_block, max_measured_w)  # Prevent clipping if text overflows max_width
+        
+        h_block = sum(measured_heights) + max(0, len(final_lines) - 1) * line_spacing
 
         # Create temporary canvas for this field
         pad = 40
-        temp_img = Image.new("RGBA", (w_block + pad * 2, h_block + pad * 2), (0, 0, 0, 0))
+        temp_img = Image.new("RGBA", (int(w_block + pad * 2), int(h_block + pad * 2)), (0, 0, 0, 0))
         temp_draw = ImageDraw.Draw(temp_img)
 
         # Draw lines centered horizontally and top-aligned inside the padded space
         temp_y = pad
-        for line in final_lines:
+        for i, line in enumerate(final_lines):
             # We can also draw left-aligned at x=pad
             temp_draw.text((pad, temp_y), line, fill=color, font=font)
-            temp_y += line_spacing
+            temp_y += measured_heights[i] + line_spacing
 
-        # Apply skew (starting from the half-way point on the right side)
+        # Apply skew to the entire image
         if skew != 0:
             w_img, h_img = temp_img.size
-            w_half = w_img // 2
-            pad_y = abs(skew) // 2 + 10
+            pad_y = abs(skew) + 10
             dest_h = h_img + pad_y * 2
             
             # Create a blank destination canvas
             dest = Image.new("RGBA", (w_img, dest_h), (0, 0, 0, 0))
             
-            # Left half stays flat (copied directly, offset by pad_y)
-            left_half = temp_img.crop((0, 0, w_half, h_img))
-            dest.paste(left_half, (0, pad_y))
-            
-            # Right half is skewed with perspective transform
-            right_half = temp_img.crop((w_half, 0, w_img, h_img))
-            
-            # Define mapping points for the right half: dst_pts to src_pts
-            dy0 = pad_y
-            dy1 = pad_y + h_img
-            dy2 = pad_y + h_img + skew / 2
-            dy3 = pad_y - skew / 2
+            # Define mapping points for the entire image: dst_pts to src_pts
+            if skew > 0:
+                dy0, dy1 = pad_y, pad_y + h_img
+                dy2, dy3 = pad_y + h_img + skew, pad_y - skew
+            else:
+                dy0, dy1 = pad_y - skew, pad_y + h_img + skew
+                dy2, dy3 = pad_y + h_img, pad_y
             
             dst_pts = [
-                (0, dy0),          # top-left of slice
-                (0, dy1),          # bottom-left of slice
-                (w_half, dy2),     # bottom-right of slice
-                (w_half, dy3)      # top-right of slice
+                (0, dy0),      # Top-left
+                (0, dy1),      # Bottom-left
+                (w_img, dy2),  # Bottom-right
+                (w_img, dy3)   # Top-right
             ]
             src_pts = [
                 (0, 0),            # top-left
                 (0, h_img),        # bottom-left
-                (w_half, h_img),   # bottom-right
-                (w_half, 0)        # top-right
+                (w_img, h_img),    # bottom-right
+                (w_img, 0)         # top-right
             ]
             
             matrix = []
@@ -289,8 +283,8 @@ def draw_labeled_vial(row, output_filename):
             B = np.array(src_pts, dtype=float).reshape(8)
             coeffs = np.linalg.solve(A, B)
             
-            warped_right = right_half.transform((w_half, dest_h), Image.PERSPECTIVE, coeffs, Image.Resampling.BILINEAR)
-            dest.paste(warped_right, (w_half, 0), warped_right)
+            warped = temp_img.transform((w_img, dest_h), Image.PERSPECTIVE, coeffs, Image.Resampling.BILINEAR)
+            dest.paste(warped, (0, 0), warped)
             temp_img = dest
 
         # Apply local cylinder warp/curve
@@ -335,8 +329,15 @@ PREVIEW_MODE = "--preview" in sys.argv
 rows = list(df.iterrows())
 
 if PREVIEW_MODE:
-    rows = rows[:1]
-    print("Preview mode: generating first entry only")
+    if "--row" in sys.argv:
+        try:
+            idx = int(sys.argv[sys.argv.index("--row") + 1])
+            rows = [rows[idx]]
+        except (ValueError, IndexError):
+            rows = rows[:1]
+    else:
+        rows = rows[:1]
+    print("Preview mode: generating single preview entry")
 
 print("Starting label generation...")
 for _, row in rows:

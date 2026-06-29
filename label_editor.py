@@ -4,7 +4,63 @@ import json
 import os
 import sys
 import pandas as pd
-from PIL import Image, ImageTk
+import numpy as np
+from PIL import Image, ImageTk, ImageFont, ImageDraw
+
+FONT_PATH_SEMIBOLD = "Inter-SemiBold.ttf"
+FONT_PATH_MEDIUM = "Inter-Medium.ttf"
+
+def warp_image_cylindrical(image, center_x, radius, curvature,
+                           crop_x1, crop_y1,
+                           crop_x2, crop_y2):
+    roi = image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
+    img_arr = np.array(roi)
+    h, w, c = img_arr.shape
+    
+    yy, xx = np.mgrid[0:h, 0:w]
+    
+    abs_xx = xx + crop_x1
+    abs_yy = yy + crop_y1
+    
+    src_x = xx.astype(np.float32)
+    src_y = yy.astype(np.float32)
+    
+    dx = abs_xx - center_x
+    valid_mask = np.abs(dx) < radius
+    
+    theta = np.zeros_like(dx, dtype=np.float32)
+    theta[valid_mask] = np.arcsin(dx[valid_mask] / radius)
+    
+    src_x[valid_mask] = (center_x + radius * theta[valid_mask]) - crop_x1
+    src_y[valid_mask] = (abs_yy[valid_mask] - curvature * (np.cos(theta[valid_mask]) - 1)) - crop_y1
+    
+    src_x = np.clip(src_x, 0, w - 1)
+    src_y = np.clip(src_y, 0, h - 1)
+    
+    x0 = np.floor(src_x).astype(np.int32)
+    x1 = np.minimum(x0 + 1, w - 1)
+    y0 = np.floor(src_y).astype(np.int32)
+    y1 = np.minimum(y0 + 1, h - 1)
+    
+    wa = (x1 - src_x) * (y1 - src_y)
+    wb = (src_x - x0) * (y1 - src_y)
+    wc = (x1 - src_x) * (src_y - y0)
+    wd = (src_x - x0) * (src_y - y0)
+    
+    warped_arr = np.zeros_like(img_arr)
+    for i in range(c):
+        warped_arr[..., i] = (
+            img_arr[y0, x0, i] * wa +
+            img_arr[y0, x1, i] * wb +
+            img_arr[y1, x0, i] * wc +
+            img_arr[y1, x1, i] * wd
+        ).astype(np.uint8)
+        
+    warped_arr[~valid_mask] = 0
+    
+    result = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    result.paste(Image.fromarray(warped_arr), (crop_x1, crop_y1))
+    return result
 
 CONFIG_FILE = "editor_config.json"
 CSV_FILE = "med_data.csv"
@@ -145,16 +201,30 @@ class LabelEditor:
         ttk.Button(bar, text="Open Output", command=self._open_output).pack(side=tk.LEFT, padx=1)
         ttk.Separator(bar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=4)
         ttk.Button(bar, text="Reset Zoom", command=self._reset_zoom).pack(side=tk.LEFT, padx=1)
+        ttk.Separator(bar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=4)
+        self.show_outlines_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(bar, text="Show Outlines", variable=self.show_outlines_var, command=self._draw_all).pack(side=tk.LEFT, padx=6)
 
         self.status_var = tk.StringVar(value="Ready  |  Drag to pan, Mousewheel to zoom")
         ttk.Label(bar, textvariable=self.status_var).pack(side=tk.RIGHT, padx=6)
 
-        main = ttk.Frame(self.root)
+        self.notebook = ttk.Notebook(self.root)
+        self.notebook.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=6, pady=3)
+        
+        self.tab_editor = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab_editor, text="Label Editor")
+        
+        self.tab_data = ttk.Frame(self.notebook)
+        self.notebook.add(self.tab_data, text="Data Editor")
+        
+        self._build_data_tab()
+
+        main = ttk.PanedWindow(self.tab_editor, orient=tk.HORIZONTAL)
         main.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=6, pady=3)
 
         # ── canvas ──
         cf = ttk.Frame(main)
-        cf.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        main.add(cf, weight=1)
 
         hbar = ttk.Scrollbar(cf, orient=tk.HORIZONTAL)
         vbar = ttk.Scrollbar(cf, orient=tk.VERTICAL)
@@ -171,9 +241,8 @@ class LabelEditor:
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # ── side panel ──
-        side = ttk.Frame(main, width=300)
-        side.pack(side=tk.RIGHT, fill=tk.Y, padx=(6, 0))
-        side.pack_propagate(False)
+        side = ttk.Frame(main, width=380)
+        main.add(side, weight=0)
 
         # Top section: fields list (scrollable)
         top_frame = ttk.Frame(side)
@@ -190,7 +259,8 @@ class LabelEditor:
 
         self.field_frame = ttk.Frame(self.field_container_canvas)
         self.field_frame.bind("<Configure>", lambda e: self.field_container_canvas.configure(scrollregion=self.field_container_canvas.bbox("all")))
-        self.field_container_window = self.field_container_canvas.create_window((0, 0), window=self.field_frame, anchor=tk.NW, width=280)
+        self.field_container_window = self.field_container_canvas.create_window((0, 0), window=self.field_frame, anchor=tk.NW, width=self.field_container_canvas.winfo_width())
+        self.field_container_canvas.bind("<Configure>", lambda e: self.field_container_canvas.itemconfig(self.field_container_window, width=e.width))
 
         self._rebuild_field_editors()
 
@@ -226,7 +296,7 @@ class LabelEditor:
             ttk.Label(row, text=label, width=13, anchor=tk.W).pack(side=tk.LEFT)
             var = tk.StringVar()
             var.trace_add("write", lambda *a, k=key: self._on_extra_change(k))
-            ttk.Entry(row, textvariable=var, width=7).pack(side=tk.LEFT, padx=1)
+            ttk.Spinbox(row, from_=-5000, to=5000, textvariable=var, width=7).pack(side=tk.LEFT, padx=1, fill=tk.X, expand=True)
             self.extra_vars[key] = var
 
         self._sync_extra_ui()
@@ -238,6 +308,57 @@ class LabelEditor:
         self.canvas.bind("<Button-4>", self._on_scroll_event)
         self.canvas.bind("<Button-5>", self._on_scroll_event)
         self.canvas.bind("<MouseWheel>", self._on_scroll_event)
+
+    # ── DATA EDITOR TAB ────────────────────────────────────────
+
+    def _build_data_tab(self):
+        self.active_csv_row = None
+        
+        self.tree_frame = ttk.Frame(self.tab_data)
+        self.tree_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=6, pady=6)
+        
+        self.tree_scroll_y = ttk.Scrollbar(self.tree_frame, orient=tk.VERTICAL)
+        self.tree_scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
+        self.tree_scroll_x = ttk.Scrollbar(self.tree_frame, orient=tk.HORIZONTAL)
+        self.tree_scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        self.tree = ttk.Treeview(self.tree_frame, yscrollcommand=self.tree_scroll_y.set, xscrollcommand=self.tree_scroll_x.set, show="headings")
+        self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.tree_scroll_y.config(command=self.tree.yview)
+        self.tree_scroll_x.config(command=self.tree.xview)
+        
+        self.tree.bind("<<TreeviewSelect>>", self._on_tree_select)
+        
+        self._load_csv_data()
+
+    def _load_csv_data(self):
+        try:
+            self.df = pd.read_csv(CSV_FILE)
+            self.csv_columns = list(self.df.columns)
+        except Exception:
+            self.df = pd.DataFrame(columns=["MEDICINES", "Strength", "Total"])
+            self.csv_columns = list(self.df.columns)
+            
+        self.tree.delete(*self.tree.get_children())
+        self.tree["columns"] = self.csv_columns
+        for col in self.csv_columns:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=150, anchor=tk.W)
+            
+        for i, row in self.df.iterrows():
+            self.tree.insert("", "end", iid=str(i), values=list(row))
+            
+    def _on_tree_select(self, event):
+        selected = self.tree.selection()
+        if not selected:
+            self.active_csv_row = None
+            self._draw_all()
+            return
+            
+        item_id = selected[0]
+        vals = self.tree.item(item_id)["values"]
+        self.active_csv_row = dict(zip(self.csv_columns, vals))
+        self._draw_all()
 
     # ── FIELD EDITORS ──────────────────────────────────────────
 
@@ -490,87 +611,199 @@ class LabelEditor:
     # ── DRAWING ────────────────────────────────────────────────
 
     def _draw_all(self):
-        self.canvas.delete("box", "box_label", "align_line", "coord_label", "rot_label")
+        self.canvas.delete("box", "box_label", "align_line", "coord_label", "rot_label", "crop_box", "crop_label")
         if self.image is None:
             return
+        self._draw_crop_box()
         self._draw_boxes()
-        self._draw_coord_labels()
+
+    def _draw_crop_box(self):
+        try:
+            x1 = int(self.config["crop_x1"])
+            y1 = int(self.config["crop_y1"])
+            x2 = int(self.config["crop_x2"])
+            y2 = int(self.config["crop_y2"])
+            cx1, cy1 = self._img_to_canvas(x1, y1)
+            cx2, cy2 = self._img_to_canvas(x2, y2)
+            if getattr(self, "show_outlines_var", None) and self.show_outlines_var.get():
+                self.canvas.create_rectangle(
+                    cx1, cy1, cx2, cy2,
+                    outline="#FF5252", width=3, dash=(6, 4),
+                    tags="crop_box"
+                )
+                self.canvas.create_text(
+                    cx1 + 8, cy1 + 8, anchor=tk.NW,
+                    text="Warp / Crop Area",
+                    fill="#FF5252", font=("", int(12 * max(0.5, self.scale)), "bold"),
+                    tags="crop_label"
+                )
+        except Exception:
+            pass
 
     def _draw_boxes(self):
         self.box_items.clear()
+        
+        if not hasattr(self, "font_cache"):
+            self.font_cache = {}
+            
+        def get_font(weight, size):
+            key = (weight, size)
+            if key not in self.font_cache:
+                path = FONT_PATH_SEMIBOLD if weight == "SemiBold" else FONT_PATH_MEDIUM
+                try:
+                    self.font_cache[key] = ImageFont.truetype(path, size)
+                except IOError:
+                    self.font_cache[key] = ImageFont.load_default()
+            return self.font_cache[key]
+
         for i, fld in enumerate(self.config["fields"]):
-            color = FIELD_COLORS[i % len(FIELD_COLORS)]
-            x_img = fld.get("x", self.config["text_align_x"])
+            color = tuple(fld.get("color", [47, 47, 47, 255]))
+            x_img = fld.get("x", self.config.get("text_align_x", 0))
             y_img = fld["y"]
             cx, cy = self._img_to_canvas(x_img, y_img)
-            fld_w = fld.get("max_width", 0)
-            bw_val = fld_w if fld_w > 0 else self.config.get("box_width", BOX_W)
-            bw = bw_val * self.scale
-            bh = self.config.get("box_height", BOX_H) * self.scale
-            skew = fld.get("skew", 0) * self.scale
+            
+            font_size = fld.get("font_size", 46)
+            font_weight = fld.get("font_weight", "SemiBold")
+            rotation = fld.get("rotation", 0)
+            
+            csv_col = fld.get("csv_column", "")
+            if hasattr(self, "active_csv_row") and self.active_csv_row and csv_col in self.active_csv_row:
+                text = str(self.active_csv_row[csv_col]).upper()
+                if text == "NAN": text = ""
+            else:
+                text = fld.get("label", "Dummy Text").upper()
+            
+            scaled_font_size = max(1, int(font_size * self.scale))
+            font = get_font(font_weight, scaled_font_size)
+            max_width = fld.get("max_width", 0) * self.scale
+            
+            lines = [text]
+            final_lines = []
+            
+            dummy_img = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+            draw = ImageDraw.Draw(dummy_img)
+            
+            for line in lines:
+                if max_width > 0:
+                    words = line.split(" ")
+                    chunks = []
+                    for i, word in enumerate(words):
+                        if "/" in word:
+                            parts = word.split("/")
+                            chunks.append(parts[0])
+                            for part in parts[1:]:
+                                chunks.append("/" + part)
+                        else:
+                            chunks.append(word)
+                        if i < len(words) - 1:
+                            chunks.append(" ")
+                            
+                    current_line = ""
+                    for chunk in chunks:
+                        test_line = current_line + chunk
+                        bbox = draw.textbbox((0, 0), test_line.strip(), font=font)
+                        line_tw = bbox[2] - bbox[0]
+                        if line_tw <= max_width:
+                            current_line += chunk
+                        else:
+                            if current_line.strip():
+                                final_lines.append(current_line.strip())
+                            current_line = chunk
+                    if current_line.strip():
+                        final_lines.append(current_line.strip())
+                else:
+                    final_lines.append(line)
+            
+            line_spacing = self.config.get("line_spacing", 48) * self.scale
+            measured_widths = [draw.textbbox((0, 0), l, font=font)[2] - draw.textbbox((0, 0), l, font=font)[0] for l in final_lines]
+            measured_heights = [draw.textbbox((0, 0), l, font=font)[3] - draw.textbbox((0, 0), l, font=font)[1] for l in final_lines]
+            
+            max_measured_w = max(measured_widths) if measured_widths else 10
+            w_block = max_width if max_width > 0 else max_measured_w
+            w_block = max(w_block, max_measured_w)  # Prevent clipping if text overflows max_width
+            
+            h_block = sum(measured_heights) + max(0, len(final_lines) - 1) * line_spacing
+            
+            pad = 20
+            txt_img = Image.new("RGBA", (int(w_block + pad * 2), int(h_block + pad * 2)), (0, 0, 0, 0))
+            txt_draw = ImageDraw.Draw(txt_img)
+            
+            curr_y = pad
+            for i, line in enumerate(final_lines):
+                txt_draw.text((pad, curr_y), line, fill=color, font=font)
+                curr_y += measured_heights[i] + line_spacing
+                
+            tw = w_block
+            th = h_block
+            
+            skew = fld.get("skew", 0)
+            if skew != 0:
+                w_img, h_img = txt_img.size
+                pad_y = int(abs(skew) + 10)
+                dest_h = h_img + pad_y * 2
+                
+                dest = Image.new("RGBA", (w_img, dest_h), (0, 0, 0, 0))
+                
+                if skew > 0:
+                    dy0, dy1 = pad_y, pad_y + h_img
+                    dy2, dy3 = pad_y + h_img + skew, pad_y - skew
+                else:
+                    dy0, dy1 = pad_y - skew, pad_y + h_img + skew
+                    dy2, dy3 = pad_y + h_img, pad_y
+                
+                dst_pts = [
+                    (0, dy0), (0, dy1), (w_img, dy2), (w_img, dy3)
+                ]
+                src_pts = [
+                    (0, 0), (0, h_img), (w_img, h_img), (w_img, 0)
+                ]
+                
+                matrix = []
+                for d, s in zip(dst_pts, src_pts):
+                    matrix.append([d[0], d[1], 1, 0, 0, 0, -s[0] * d[0], -s[0] * d[1]])
+                    matrix.append([0, 0, 0, d[0], d[1], 1, -s[1] * d[0], -s[1] * d[1]])
+                A = np.array(matrix, dtype=float)
+                B = np.array(src_pts, dtype=float).reshape(8)
+                coeffs = np.linalg.solve(A, B)
+                
+                warped = txt_img.transform((w_img, dest_h), Image.PERSPECTIVE, coeffs, Image.Resampling.BILINEAR)
+                dest.paste(warped, (0, 0), warped)
+                txt_img = dest
 
-            # 6-point polygon: Left half is flat, right half slopes
-            coords = [
-                cx, cy,                                # Left-Top
-                cx + bw / 2, cy,                       # Mid-Top (start of skew)
-                cx + bw, cy - skew / 2,                # Right-Top
-                cx + bw, cy + bh + skew / 2,           # Right-Bottom
-                cx + bw / 2, cy + bh,                  # Mid-Bottom (start of skew)
-                cx, cy + bh                            # Left-Bottom
-            ]
-            rect = self.canvas.create_polygon(
-                coords,
-                fill=color, outline=color, width=2,
-                tags="box",
-            )
-            lbl = self.canvas.create_text(
-                cx + 4, cy + bh / 2, anchor=tk.W,
-                text=fld["label"], fill="white",
-                font=("", int(9 * self.scale), "bold"),
-                width=int(bw),  # wrap text if longer than actual box width
-                tags="box_label",
-            )
-            # Rotation indicator
-            rot = fld.get("rotation", 0)
-            if rot:
-                self.canvas.create_text(
-                    cx + bw - 4, cy + 4, anchor=tk.NE,
-                    text=f"{rot}\u00b0", fill="#FFEB3B",
-                    font=("", int(8 * self.scale)),
-                    tags=("rot_label",),
+            curve = fld.get("curve", 0)
+            if curve != 0:
+                txt_img = warp_image_cylindrical(
+                    txt_img,
+                    center_x=txt_img.width / 2,
+                    radius=self.config.get("cylinder_radius", 700),
+                    curvature=curve,
+                    crop_x1=0, crop_y1=0,
+                    crop_x2=txt_img.width, crop_y2=txt_img.height
                 )
-            # X guide line
-            self.canvas.create_line(
-                cx, cy - 20 * self.scale, cx, cy + bh + 10 * self.scale,
-                fill=color, width=1, dash=(3, 2),
-                tags="coord_label",
-            )
-            # X label
-            self.canvas.create_text(
-                cx, cy - 22 * self.scale, anchor=tk.S,
-                text=f"X:{x_img}", fill=color,
-                font=("", int(8 * self.scale)),
-                tags="coord_label",
-            )
-            self.box_items[fld["id"]] = {"rect": rect, "text": lbl}
 
-    def _draw_coord_labels(self):
-        for i, fld in enumerate(self.config["fields"]):
-            color = FIELD_COLORS[i % len(FIELD_COLORS)]
-            x_img = fld.get("x", self.config["text_align_x"]) + BOX_W + 8
-            y_img = fld["y"]
-            cx, cy = self._img_to_canvas(x_img, y_img)
-            rot = fld.get("rotation", 0)
-            label = f"Y:{y_img}"
-            if rot:
-                label += f" R:{rot}"
-            self.canvas.create_text(
-                cx, cy + BOX_H * self.scale / 2, anchor=tk.W,
-                text=label,
-                fill=color,
-                font=("", int(8 * self.scale)),
-                tags="coord_label",
-            )
+            
+            if rotation:
+                txt_img = txt_img.rotate(rotation, expand=True, fillcolor=(0, 0, 0, 0))
+                
+            tk_txt = ImageTk.PhotoImage(txt_img)
+            
+            center_x = cx + tw / 2
+            center_y = cy + th / 2
+            paste_x = int(center_x - txt_img.width / 2)
+            paste_y = int(center_y - txt_img.height / 2)
+            
+            img_id = self.canvas.create_image(paste_x, paste_y, anchor=tk.NW, image=tk_txt, tags="box")
+            
+            # Draw a subtle outline for interaction clarity
+            rect_id = None
+            if getattr(self, "show_outlines_var", None) and self.show_outlines_var.get():
+                rect_id = self.canvas.create_rectangle(
+                    paste_x + pad, paste_y + pad, paste_x + txt_img.width - pad, paste_y + txt_img.height - pad,
+                    outline="#ffffff", width=1, dash=(2, 2), tags="box"
+                )
+            
+            self.box_items[fld["id"]] = {"img": tk_txt, "id": img_id, "rect": rect_id}
+
 
     # ── CANVAS NAVIGATION ──────────────────────────────────────
 
@@ -659,8 +892,11 @@ class LabelEditor:
         self._save_config()
         try:
             import subprocess
+            cmd = [sys.executable, "index.py", "--preview"]
+            if hasattr(self, "active_csv_row_index") and self.active_csv_row_index is not None:
+                cmd.extend(["--row", str(self.active_csv_row_index)])
             subprocess.Popen(
-                [sys.executable, "index.py", "--preview"],
+                cmd,
                 cwd=os.path.dirname(os.path.abspath(__file__)),
             )
             self.status_var.set("Preview launched...")
