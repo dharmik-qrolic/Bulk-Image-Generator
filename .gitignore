@@ -13,3 +13,5 @@ venv
 !templates/
 !templates/**
 !requirements.txt
+!Forms_CSV_medicines/
+!Forms_CSV_medicines/**
