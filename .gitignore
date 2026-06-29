@@ -12,3 +12,4 @@ venv
 !Inter-SemiBold.ttf
 !templates/
 !templates/**
+!requirements.txt
