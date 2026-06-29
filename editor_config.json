@@ -5,8 +5,8 @@
       "label": "Medicine Name",
       "csv_column": "MEDICINES",
       "x": 1600,
-      "y": 2392,
-      "font_size": 56,
+      "y": 2329,
+      "font_size": 69,
       "color": [
         47,
         47,
@@ -17,7 +17,7 @@
       "rotation": 0,
       "max_width": 643,
       "skew": 0,
-      "curve": 0
+      "curve": 8
     },
     {
       "id": "f1",
