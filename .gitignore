@@ -12,3 +12,5 @@ venv
 !Inter-SemiBold.ttf
 !Forms_CSV_medicines/
 !Forms_CSV_medicines/**
+!templates/
+!templates/**
