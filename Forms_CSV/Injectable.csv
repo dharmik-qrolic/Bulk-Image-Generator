@@ -1,0 +1,125 @@
+SKU,Medication,Category,Form,Strength,Size,Total,List $,Your $,Description
+HR-HCC,HCG (Chorionic) - Commercial,Hormone Replacement Therapy,Injectable,"10,000IU",10mL,,,$210.00,Commercial-grade hCG supporting testicular function and male fertility.
+HR-HGH,HGH,Hormone Replacement Therapy,Injectable,10iu,5mL,,,$550.00,"Injectable human growth hormone for GH deficiency, anti-aging, and body composition."
+HR-NAN,Nandrolone DECANOATE,Hormone Replacement Therapy,Injectable,200mg/mL,5mL,1000mg,$75.00,,"Long-acting anabolic steroid for muscle wasting, osteoporosis, and anemia."
+HR-TCP,Testosterone Cypionate,Hormone Replacement Therapy,Injectable,25mg/ml GSO,5mL,125mg,$17.50,$17.50,Long-acting injectable testosterone ester for hypogonadism and TRT.
+HR-TCP-02,Testosterone Cypionate,Hormone Replacement Therapy,Injectable,25mg/ml MCT,5mL,125mg,$17.50,$17.50,Long-acting injectable testosterone ester for hypogonadism and TRT.
+HR-TCP-03,Testosterone Cypionate,Hormone Replacement Therapy,Injectable,200mg/ml GSO,5mL,1000mg,$17.50,$17.50,Long-acting injectable testosterone ester for hypogonadism and TRT.
+HR-TCP-04,Testosterone Cypionate,Hormone Replacement Therapy,Injectable,200mg/ml MCT,5mL,1000mg,$17.50,$17.50,Long-acting injectable testosterone ester for hypogonadism and TRT.
+HR-TCP-05,Testosterone Cypionate,Hormone Replacement Therapy,Injectable,200mg/ml MCT,10mL,2000mg,$35.00,$35.00,Long-acting injectable testosterone ester for hypogonadism and TRT.
+HR-TPC,Testosterone Cypionate - Commercial,Hormone Replacement Therapy,Injectable,200mg/ml,10mL,3000mg,$70.00,$70.00,Commercial-grade testosterone cypionate for TRT.
+HR-TEN,Testosterone Enanthate,Hormone Replacement Therapy,Injectable,200mg/ml GSO,5mL,1000mg,$17.50,$17.50,Injectable testosterone ester with 1–2 week half-life for TRT dosing.
+HR-TEN-02,Testosterone Enanthate,Hormone Replacement Therapy,Injectable,200mg/ml MCT,10mL,2000mg,$35.00,$35.00,Injectable testosterone ester with 1–2 week half-life for TRT dosing.
+HR-TCA,Testosterone Cypionate/Anastrozole,Hormone Replacement Therapy,Injectable,200mg/1mg,10mL,,$46.48,,Combined TRT injectable with built-in aromatase inhibitor.
+SX-TX1,Trimix 1 503B,Sexual Health,Injectable,Papaverine 30mg/Phentolamine 1mg/PGE1 10mcg,5mL,,$75.00,$75.00,Low-dose papaverine/phentolamine/PGE1 injectable for erectile dysfunction.
+SX-TX2,Trimix 2 503B,Sexual Health,Injectable,Papaverine 30mg/Phentolamine 2mg/PGE1 20mcg,5mL,,$100.00,$100.00,Higher-dose intracavernosal triple combination for moderate-to-severe ED.
+WL-GSH,Glutathione,Wellness,Injectable,200mg/mL,10mL,2000mg,$15.00,$24.00,Master antioxidant detoxifying cells and supporting immune function.
+WL-GSH-02,Glutathione,Wellness,Injectable,600mg/mL,10mL,6000mg,$30.00,$36.00,Master antioxidant detoxifying cells and supporting immune function.
+WL-B12,Cyanocobalamin (B12) - Commercial,Wellness,Injectable,1000mcg/1mL,30mL,30mg,$48.00,$79.68,"Commercial injectable B12 for energy, nerve health, and metabolism."
+WL-MCB,Methylcobalamin,Wellness,Injectable,1mg/mL,10mL,10mg,$100.00,$58.10,Active methyl-B12 injection for superior neurological and energy support.
+WL-CB5,Cyanocobalamin B12 503B,Wellness,Injectable,1mg/ml,10mL,10mg,$20.00,$20.00,503B-grade B12 injectable for clinic-administered nutritional support.
+WL-NA5,NAD Ampule 503B,Wellness,Injectable,100mg/1mL,1mL x30,3000mg,$60.00,$60.00,Single-dose 503B NAD+ ampule for clinic IV or IM administration.
+WL-ND5,NAD+ 503B,Wellness,Injectable,100mg/mL,10mL,1000mg,$90.00,$90.00,503B-compounded NAD+ injectable for IV wellness and cellular energy protocols.
+WL-ND5-02,NAD+ 503B,Wellness,Injectable,200mg/mL,10mL,500mg,$90.00,$90.00,503B-compounded NAD+ injectable for IV wellness and cellular energy protocols.
+WL-ND5-03,NAD+ 503B,Wellness,Injectable,200mg/mL,6mL,1200mg,$68.00,$68.00,503B-compounded NAD+ injectable for IV wellness and cellular energy protocols.
+PS-MRS,AOD-9604/MOTs-C - Metabolic Reset Stack,Peptide Stacks,Injectable,1.2mg/2mg/mL,5mL,,$135.00,,Pre-formulated metabolic stack combining lipolytic and mitochondrial activating peptides.
+PS-MRS-02,AOD-9604/MOTs-C - Metabolic Reset Stack,Peptide Stacks,Injectable,2.4mg/4mg/mL,5mL,,$160.00,,Pre-formulated metabolic stack combining lipolytic and mitochondrial activating peptides.
+PS-VFR,AOD-9604/MOTs-C/Tesamorelin - Visceral Fat Reduction Stack,Peptide Stacks,Injectable,1.2mg/2mg/3mg/mL,5mL,,$170.00,,"Triple-peptide visceral fat reduction stack targeting adipose tissue, metabolism, and GH."
+PS-VFR-02,AOD-9604/MOTs-C/Tesamorelin - Visceral Fat Reduction Stack,Peptide Stacks,Injectable,2.4mg/4mg/6mg/ml,5mL,,$190.00,,"Triple-peptide visceral fat reduction stack targeting adipose tissue, metabolism, and GH."
+PS-WLV,BPC-157/TB-500 - Wolverine Stack,Peptide Stacks,Injectable,3mg/3mg/mL,5mL,,$135.00,,Classic dual-peptide recovery stack for accelerated musculoskeletal repair.
+PS-WIC,BPC-157/TB500/KPV - Wolverine Inflammation Control Stack,Peptide Stacks,Injectable,3mg/3mg/3mg/mL,5mL,,$140.00,,Enhanced repair stack with anti-inflammatory KPV for gut and systemic healing.
+PS-AWV,BPC-157/TB-500/KPV/GHK-Cu - Advanced Wolverine Stack,Peptide Stacks,Injectable,3mg/3mg/3mg/10mg/mL,5mL,,$145.00,,Comprehensive regenerative stack with copper peptide for advanced tissue repair.
+PS-GOS,CJC-1295/Ipamorelin - Growth Hormone Optimization Stack,Peptide Stacks,Injectable,1.2mg/2mg/mL,5mL,,$135.00,,Gold-standard GH stack combining GHRH analogue and secretagogue for pulsatile release.
+PS-GOS-02,CJC-1295/Ipamorelin - Growth Hormone Optimization Stack,Peptide Stacks,Injectable,2mg/3mg/mL,5mL,,$110.00,,Gold-standard GH stack combining GHRH analogue and secretagogue for pulsatile release.
+PS-NRS,DSIP/BPC-157/CJC-1295 -Night Repair Stack,Peptide Stacks,Injectable,1mg/2mg/2mg/mL,5mL,,$145.00,,"Overnight recovery stack combining sleep induction, tissue repair, and GH optimization."
+PS-IDS,LL-37/Thymosin Alpha-1 - Immune Defense Stack,Peptide Stacks,Injectable,2mg/5mg/mL,5mL,,$160.00,,Dual-peptide immune stack for innate and adaptive immune enhancement.
+PS-NGS,PE-22-28/Pinealon/Selank - Neurogenesis Stack,Peptide Stacks,Injectable,2mg/2mg/2mg/mL,5mL,,$145.00,,"Triple nootropic stack for synaptic repair, neuroprotection, and cognitive resilience."
+PS-CES,Semax/Selank - Cognitive Enhancement Stack,Peptide Stacks,Injectable,1mg/1mg/mL,5mL,,$125.00,,"Anxiolytic-nootropic dual-peptide stack for focus, calm, and brain optimization."
+PP-MT2,Melanotan II (MT-2),Peptides,Injectable,10mg/mL,5mL,,$95.00,,Melanocortin agonist stimulating melanin production for tanning and sexual arousal.
+PP-LRS,GHK-Cu/Epithalon - Longevity & Regeneration Stack,Peptides,Injectable,10mg/2mg/mL,5mL,,$150.00,,Longevity stack combining copper peptide with telomerase activator.
+AS-RET,Retatrutide,Appetite Suppressant,Injection Solution,8mg/mL,1 mL,8mg,$185.00,$148.00,Triple-agonist (GLP-1/GIP/glucagon) for advanced weight loss and metabolic control.
+AS-RET-02,Retatrutide,Appetite Suppressant,Injection Solution,8mg/mL,2 mL,16mg,$275.00,$220.00,Triple-agonist (GLP-1/GIP/glucagon) for advanced weight loss and metabolic control.
+AS-RET-03,Retatrutide,Appetite Suppressant,Injection Solution,8mg/mL,3 mL,24mg,$330.00,$264.00,Triple-agonist (GLP-1/GIP/glucagon) for advanced weight loss and metabolic control.
+AS-RET-04,Retatrutide,Appetite Suppressant,Injection Solution,8mg/mL,4 mL,32mg,$370.00,$296.00,Triple-agonist (GLP-1/GIP/glucagon) for advanced weight loss and metabolic control.
+AS-RET-05,Retatrutide,Appetite Suppressant,Injection Solution,16mg/mL,3 mL,48mg,,,Triple-agonist (GLP-1/GIP/glucagon) for advanced weight loss and metabolic control.
+AS-RET-06,Retatrutide,Appetite Suppressant,Injection Solution,16mg/mL,4 mL,64mg,,,Triple-agonist (GLP-1/GIP/glucagon) for advanced weight loss and metabolic control.
+AS-SGY,Semaglutide/Glycine,Appetite Suppressant,Injection Solution,0.5mg/5mg/mL,2 mL,1mg/10mg,$150.00,$120.00,GLP-1 agonist with glycine buffer to reduce injection-site discomfort.
+AS-SGY-02,Semaglutide/Glycine,Appetite Suppressant,Injection Solution,1mg/5mg/mL,2 mL,2mg/10mg,$200.00,$160.00,GLP-1 agonist with glycine buffer to reduce injection-site discomfort.
+AS-SGY-03,Semaglutide/Glycine,Appetite Suppressant,Injection Solution,2mg/5mg/mL,2 mL,4mg/10mg,$105.00,$84.00,GLP-1 agonist with glycine buffer to reduce injection-site discomfort.
+AS-SGY-04,Semaglutide/Glycine,Appetite Suppressant,Injection Solution,3.5mg/5mg/mL,2 mL,7.5mg/10mg,$275.00,$220.00,GLP-1 agonist with glycine buffer to reduce injection-site discomfort.
+AS-SGY-05,Semaglutide/Glycine,Appetite Suppressant,Injection Solution,5mg/5mg/mL,2 mL,10mg/10mg,$90.00,$72.00,GLP-1 agonist with glycine buffer to reduce injection-site discomfort.
+AS-SB12,Semaglutide/B-12,Appetite Suppressant,Injection Solution,0.5mg/0.5mg/mL,2 mL,1mg/1mg,$50.00,$40.00,GLP-1 agonist paired with B12 to support energy and nerve health during weight loss.
+AS-SB12-02,Semaglutide/B-12,Appetite Suppressant,Injection Solution,1mg/0.5mg/mL,2 mL,2mg/1mg,$425.00,$340.00,GLP-1 agonist paired with B12 to support energy and nerve health during weight loss.
+AS-SB12-03,Semaglutide/B-12,Appetite Suppressant,Injection Solution,2mg/0.5mg/mL,2 mL,4mg/1mg,$565.00,$452.00,GLP-1 agonist paired with B12 to support energy and nerve health during weight loss.
+AS-SB12-04,Semaglutide/B-12,Appetite Suppressant,Injection Solution,3.5mg/0.5mg/mL,2 mL,7.5mg/1mg,$115.00,$92.00,GLP-1 agonist paired with B12 to support energy and nerve health during weight loss.
+AS-SB12-05,Semaglutide/B-12,Appetite Suppressant,Injection Solution,5mg/0.5mg/mL,2 mL,10mg/1mg,$225.00,$180.00,GLP-1 agonist paired with B12 to support energy and nerve health during weight loss.
+AS-TGY,Tirzepatide/Glycine,Appetite Suppressant,Injection Solution,5mg/5mg/mL,2 mL,10mg/10mg,$265.00,$212.00,Dual GLP-1/GIP agonist with glycine for enhanced tolerability.
+AS-TGY-02,Tirzepatide/Glycine,Appetite Suppressant,Injection Solution,10mg/5mg/mL,2 mL,20mg/10mg,$15.00,$12.00,Dual GLP-1/GIP agonist with glycine for enhanced tolerability.
+AS-TGY-03,Tirzepatide/Glycine,Appetite Suppressant,Injection Solution,15mg/5mg/mL,2 mL,30mg/10mg,$30.00,$24.00,Dual GLP-1/GIP agonist with glycine for enhanced tolerability.
+AS-TGY-04,Tirzepatide/Glycine,Appetite Suppressant,Injection Solution,20mg/5mg/mL,2 mL,40mg/10mg,$45.00,$36.00,Dual GLP-1/GIP agonist with glycine for enhanced tolerability.
+AS-TGY-05,Tirzepatide/Glycine,Appetite Suppressant,Injection Solution,25mg/5mg/mL,2 mL,50mg/10mg,$325.00,$260.00,Dual GLP-1/GIP agonist with glycine for enhanced tolerability.
+AS-TGY-06,Tirzepatide/Glycine,Appetite Suppressant,Injection Solution,30mg/5mg/mL,2 mL,60mg/10mg,$150.00,$120.00,Dual GLP-1/GIP agonist with glycine for enhanced tolerability.
+AS-TB12,Tirzepatide/B-12,Appetite Suppressant,Injection Solution,5mg/0.5mg/mL,2 mL,10mg/1mg,$25.00,$20.00,Dual GLP-1/GIP agonist with B12 to offset fatigue and support nerve function.
+AS-TB12-02,Tirzepatide/B-12,Appetite Suppressant,Injection Solution,10mg/0.5mg/mL,2 mL,20mg/1mg,$100.00,$80.00,Dual GLP-1/GIP agonist with B12 to offset fatigue and support nerve function.
+AS-TB12-03,Tirzepatide/B-12,Appetite Suppressant,Injection Solution,15mg/0.5mg/mL,2 mL,30mg/1mg,$250.00,$200.00,Dual GLP-1/GIP agonist with B12 to offset fatigue and support nerve function.
+AS-TB12-04,Tirzepatide/B-12,Appetite Suppressant,Injection Solution,20mg/0.5mg/mL,2 mL,40mg/1mg,$240.00,$192.00,Dual GLP-1/GIP agonist with B12 to offset fatigue and support nerve function.
+AS-TB12-05,Tirzepatide/B-12,Appetite Suppressant,Injection Solution,25mg/0.5mg/mL,2 mL,50mg/1mg,$75.00,$60.00,Dual GLP-1/GIP agonist with B12 to offset fatigue and support nerve function.
+AS-TB12-06,Tirzepatide/B-12,Appetite Suppressant,Injection Solution,30mg/0.5mg/mL,2 mL,60mg/1mg,$285.00,$228.00,Dual GLP-1/GIP agonist with B12 to offset fatigue and support nerve function.
+AS-RT,Retatrutide + Tirzepatide,Appetite Suppressant,Injection Solution,16mg/5mg/mL,1 mL,16mg/5mg,$210.00,,Triple + dual agonist combination for synergistic fat loss.
+AS-RT-02,Retatrutide + Tirzepatide,Appetite Suppressant,Injection Solution,16mg/5mg/mL,2 mL,32mg/10mg,$385.00,,Triple + dual agonist combination for synergistic fat loss.
+FL-AOD,AOD-9604,Fat Loss & Metabolic,Injection Solution,1.2mg/mL,5 mL,6mg,$115.00,$92.00,C-terminal HGH fragment stimulating lipolysis without affecting IGF-1 or blood sugar.
+FL-AOD-02,AOD-9604,Fat Loss & Metabolic,Injection Solution,2.4mg/mL,5 mL,12mg,$215.00,$172.00,C-terminal HGH fragment stimulating lipolysis without affecting IGF-1 or blood sugar.
+FL-AOD-M,AOD-9604/MOTs-C,Fat Loss & Metabolic,Injection Solution,1.2mg/2mg/mL,5 mL,6mg/10mg,$150.00,$120.00,Lipolytic + mitochondrial activation stack for metabolic fat loss.
+FL-AOD-M-02,AOD-9604/MOTs-C,Fat Loss & Metabolic,Injection Solution,2.4mg/4mg/mL,5 mL,12mg/20mg,$280.00,$224.00,Lipolytic + mitochondrial activation stack for metabolic fat loss.
+FL-AMT,AOD-9604/MOTs-C/Tesamorelin,Fat Loss & Metabolic,Injection Solution,1.2mg/2mg/3mg/mL,5 mL,6mg/10mg/15mg,$255.00,$204.00,"Triple stack targeting visceral fat, mitochondria, and GH pulsatility."
+FL-AMT-02,AOD-9604/MOTs-C/Tesamorelin,Fat Loss & Metabolic,Injection Solution,2.4mg/4mg/6mg/mL,5 mL,12mg/20mg/30mg,$490.00,$392.00,"Triple stack targeting visceral fat, mitochondria, and GH pulsatility."
+FL-CAG,Cagrilintide,Fat Loss & Metabolic,Injection Solution,4mg/mL,5 mL,20mg,$300.00,$240.00,Long-acting amylin analogue that suppresses appetite and slows gastric emptying.
+FL-MOT,MOTs-C,Fat Loss & Metabolic,Injection Solution,10mg/mL,5 mL,50mg,$225.00,$180.00,Mitochondria-derived peptide improving insulin sensitivity and energy expenditure.
+FL-MOT-02,MOTs-C,Fat Loss & Metabolic,Injection Solution,2mg/mL,5 mL,10mg,$225.00,$180.00,Mitochondria-derived peptide improving insulin sensitivity and energy expenditure.
+FL-S32,SLU-PP-32,Fat Loss & Metabolic,Injection Solution,5mg/mL,5 mL,25mg,$90.00,$72.00,ERR agonist mimicking exercise-induced metabolic changes; boosts fat oxidation.
+FL-LPB,LIPO-B,Fat Loss & Metabolic,Injection Solution,25mg/50mg/50mg/1mg/mL,10 mL,250/500/500/10mg,$115.00,$92.00,"MIC-B12 injection (methionine, inositol, choline, B12) for lipotropic fat metabolism."
+FL-LPC,Lipo-C,Fat Loss & Metabolic,Injection Solution,10mg/mL,30 mL,300mg,$150.00,$120.00,Lipotropic complex supporting liver fat metabolism and body composition.
+AA-CER,Cerebrolysin,Anti-Aging,Injection Solution,200mg/mL,5 mL,1000mg,$225.00,$180.00,Neuropeptide mixture supporting neuronal repair and cognitive function.
+AA-FOX,FOXO4,Anti-Aging,Injection Solution,2mg/mL,5 mL,10mg,$565.00,$452.00,Peptide selectively inducing apoptosis in senescent cells to rejuvenate tissue.
+AA-GSH,Glutathione,Anti-Aging,Injection Solution,200mg/mL,10 mL,2000mg,$15.00,$12.00,Master antioxidant detoxifying cells and supporting immune function.
+AA-GSH-02,Glutathione,Anti-Aging,Injection Solution,600mg/mL,10 mL,6000mg,$30.00,$24.00,Master antioxidant detoxifying cells and supporting immune function.
+AA-MEL,Melatonin II,Anti-Aging,Injection Solution,10mg/mL,5 mL,50mg,$285.00,$228.00,Injectable melatonin for circadian regulation and antioxidant protection.
+AA-NAD,NAD+,Anti-Aging,Injection Solution,100mg/mL,10 mL,1000mg,$75.00,$60.00,"Coenzyme supporting mitochondrial energy, DNA repair, and cellular aging pathways."
+AA-NAD-02,NAD+,Anti-Aging,Injection Solution,200mg/mL,5 mL,2000mg,$150.00,$120.00,"Coenzyme supporting mitochondrial energy, DNA repair, and cellular aging pathways."
+TR-ARA,ARA-290,Tissue Repair & Recovery,Injection Solution,20mg/mL,5 mL,100mg,$300.00,$240.00,Innate repair receptor agonist with anti-inflammatory and neuroprotective properties.
+TR-BPC,BPC-157,Tissue Repair & Recovery,Injection Solution,3mg/mL,5 mL,15mg,$115.00,$92.00,"Synthetic gastric pentadecapeptide accelerating tendon, ligament, gut, and muscle healing."
+TR-BPC-02,BPC-157,Tissue Repair & Recovery,Injection Solution,4mg/mL,5 mL,20mg,$150.00,$120.00,"Synthetic gastric pentadecapeptide accelerating tendon, ligament, gut, and muscle healing."
+TR-BT5,BPC-157/TB500,Tissue Repair & Recovery,Injection Solution,3mg/3mg/mL,5 mL,15mg/15mg,$225.00,$180.00,Wolverine Stack â gut-healing BPC-157 combined with systemic repair peptide TB-500.
+TR-BTK,BPC-157/TB500/KPV,Tissue Repair & Recovery,Injection Solution,3mg/3mg/3mg/mL,5 mL,15mg/15mg/15mg,$225.00,$180.00,Triple stack adding anti-inflammatory KPV for gut and systemic healing.
+TR-BTKG,BPC-157/TB500/KPV/GHK-U,Tissue Repair & Recovery,Injection Solution,3mg/3mg/3mg/10mg/mL,5 mL,15/15/15/50mg,$225.00,$180.00,Advanced Wolverine Stack with copper peptide for added regenerative benefits.
+TR-TB5,TB-500,Tissue Repair & Recovery,Injection Solution,4mg/mL,5 mL,20mg,$115.00,$92.00,"Actin-binding peptide promoting cell migration, tissue regeneration, and anti-inflammation."
+TR-TB5-02,TB-500,Tissue Repair & Recovery,Injection Solution,3mg/mL,5 mL,15mg,$105.00,$88.00,"Actin-binding peptide promoting cell migration, tissue regeneration, and anti-inflammation."
+LG-CDG,Cardiogen,Longevity,Injection Solution,3mg/mL,5 mL,15mg,$195.00,$156.00,Tetrapeptide bioregulator supporting cardiovascular tissue repair.
+LG-CTX,Cartalax,Longevity,Injection Solution,3mg/mL,5 mL,15mg,$50.00,$40.00,Peptide bioregulator promoting cartilage and connective tissue regeneration.
+LG-EPT,Epithalon,Longevity,Injection Solution,2mg/mL,5 mL,100mg,$50.00,$40.00,Tetrapeptide activating telomerase and supporting longevity pathways.
+LG-SS3,SS-31,Longevity,Injection Solution,60mg/mL,5 mL,300mg,$295.00,$236.00,Mitochondria-targeted antioxidant restoring energy production and reducing oxidative damage.
+SL-DSP,DSIP,Sleep / Circadian Rhythm,Injection Solution,1mg/mL,5 mL,5mg,$105.00,$84.00,Delta sleep-inducing peptide promoting deep sleep and regulating circadian stress response.
+SL-DBC,DSIP/BPC/CJC,Sleep / Circadian Rhythm,Injection Solution,1mg/2mg/2mg/mL,5 mL,5/10/10mg,$275.00,$220.00,"Night Repair Stack â sleep induction, tissue healing, and GH release overnight."
+GH-CJC,CJC-1295/Ipamorelin,Growth Hormone Optimization,Injection Solution,1.2mg/2mg/mL,5 mL,6mg/10mg,$90.00,$72.00,Gold-standard GH stack: GHRH analogue + GH secretagogue for pulsatile GH release.
+GH-CJC-02,CJC-1295/Ipamorelin,Growth Hormone Optimization,Injection Solution,2mg/3mg/mL,5 mL,10mg/15mg,$150.00,$120.00,Gold-standard GH stack: GHRH analogue + GH secretagogue for pulsatile GH release.
+GH-G2,GHRP-2,Growth Hormone Optimization,Injection Solution,10mg/mL,5 mL,50mg,$225.00,$180.00,GH releasing peptide stimulating GH secretion and promoting muscle anabolism.
+GH-G6,GHRP-6,Growth Hormone Optimization,Injection Solution,10mg/mL,5 mL,50mg,$265.00,$212.00,Potent GH secretagogue that also increases appetite and supports recovery.
+GH-IGF,IGF-LR3,Growth Hormone Optimization,Injection Solution,200mcg/mL,5 mL,100mcg,$150.00,$120.00,"Long-acting IGF-1 analogue for muscle hypertrophy, fat loss, and cellular repair."
+GH-SER,Sermorelin,Growth Hormone Optimization,Injection Solution,3mg/mL,5 mL,15mg,$100.00,$80.00,GHRH analogue stimulating natural pulsatile GH release for anti-aging support.
+GH-TSM,Tesamorelin,Growth Hormone Optimization,Injection Solution,2mg/mL,5 mL,10mg,$100.00,$80.00,GHRH analogue reducing visceral adiposity and supporting metabolic health.
+GH-TSM-02,Tesamorelin,Growth Hormone Optimization,Injection Solution,5mg/mL,5 mL,25mg,,,GHRH analogue reducing visceral adiposity and supporting metabolic health.
+GH-TIP,Tesamorelin/Ipamorelin,Growth Hormone Optimization,Injection Solution,5mg/1.5mg/mL,5 mL,25mg/7.5mg,$300.00,$240.00,Dual-peptide GH stack for synergistic hormone optimization.
+IM-LL3,LL-37,Immune Support,Injection Solution,2mg/mL,5 mL,10mg,$100.00,$80.00,Human cathelicidin with broad-spectrum immune and wound-healing properties.
+IM-LLT,LL-37/Thymosin,Immune Support,Injection Solution,2mg/5mg/mL,5 mL,10mg/25mg,$250.00,$200.00,Immune Defense Stack pairing innate immunity peptide with thymosin.
+IM-TA1,Thymosin Alpha-1 (TA1),Immune Support,Injection Solution,4mg/mL,5 mL,20mg,$155.00,$124.00,Thymic immunomodulatory peptide boosting T-cell activity and immune surveillance.
+CM-PPS,PE-22-28/Pinealon/Selank,Cognitive & Mood,Injection Solution,2mg/2mg/2mg/mL,5 mL,10/10/10mg,$195.00,$156.00,"Neurogenesis Stack â synaptic plasticity, neuroprotection, and anxiolytic support."
+CM-SMS,Semax/Selank,Cognitive & Mood,Injection Solution,1mg/1mg/mL,5 mL,5mg/5mg,$155.00,$124.00,Cognitive Enhancement Stack combining ACTH nootropic with anxiolytic neuropeptide.
+HR-FOL,Follistatin,Hormone Replacement Therapy,Injection Solution,1mg/mL,5 mL,5mg,$425.00,$340.00,Myostatin/activin inhibitor promoting muscle growth and fat suppression.
+HR-KSP,Kisspeptin,Hormone Replacement Therapy,Injection Solution,1mg/mL,5 mL,5mg,$75.00,$60.00,Hypothalamic neuropeptide stimulating GnRH for reproductive hormone balance.
+HR-GND,Gonadorelin,Hormone Replacement Therapy,Injection Solution,1mg/mL,5 mL,5mg,$45.00,$36.00,GnRH analogue stimulating LH/FSH to support fertility and testosterone levels.
+HR-GN5,Gonadorelin 503B,Hormone Replacement Therapy,Injection Solution,1mg/mL,6 mL,6mg,$60.00,$60.00,503B-compounded Gonadorelin for LH/FSH stimulation in HRT protocols.
+HR-GN5-02,Gonadorelin 503B,Hormone Replacement Therapy,Injection Solution,2mg/mL,5 mL,10mg,$80.00,$80.00,503B-compounded Gonadorelin for LH/FSH stimulation in HRT protocols.
+HR-HCG,HCG,Hormone Replacement Therapy,Injection Solution,12000IU,10 mL,12000 iu,$325.00,$260.00,hCG mimics LH to support testicular function and fertility.
+SX-PT1,PT-141,Sexual Health,Injection Solution,2mg/mL,5 mL,10mg,$60.00,$48.00,Melanocortin receptor agonist centrally stimulating sexual arousal.
+SK-EGC,Epitalon/GHK-Cu,Skin & Hair Care,Injection Solution,2mg/10mg/mL,5 mL,10mg/50mg,$90.00,$72.00,Skin rejuvenation stack combining telomerase activator with copper peptide.
+SK-GHK,GHK-Cu,Skin & Hair Care,Injection Solution,10mg/mL,5 mL,50mg,$115.00,$92.00,"Copper tripeptide promoting collagen synthesis, wound healing, and skin regeneration."
