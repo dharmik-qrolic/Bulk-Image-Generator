@@ -11,3 +11,4 @@ venv
 !Inter-Medium.ttf
 !Inter-SemiBold.ttf
 !templates/
+!templates/**
